@@ -12,8 +12,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $date = trim(filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING));
     $time = trim(filter_input(INPUT_POST, 'time', FILTER_SANITIZE_NUMBER_INT));
 
+    $dateMatch = explode('/', $date);
+
     if (empty($project_id) || empty($title) || empty($date) || empty($time)) {
         $error_message = "Please fill in the required fields: Project, Title, Date, Time";
+    } elseif(count($dateMatch) != 3
+            || strlen($dateMatch[0]) != 2
+            || strlen($dateMatch[1]) != 2
+            || strlen($dateMatch[2]) != 4
+            || !checkdate($dateMatch[0], $dateMatch[1], $dateMatch[2])) {
+        $error_message = "Invalid date";
     } else {
         if(add_task($project_id, $title, $date, $time)){
             header('Location: task_list.php');
